@@ -1,0 +1,51 @@
+{
+  "name": "juice-wrld-metadata",
+  "version": "1.0.0",
+  "description": "Editor desktop de metadados, letras e validação de arquivos originais de Juice WRLD.",
+  "main": "main.cjs",
+  "author": "Leonardo Lodi",
+  "license": "MIT",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/input.css -o ./src/daisyui.css --minify",
+    "start": "npm run build:css && electron .",
+    "dev": "npm run build:css && electron .",
+    "pack": "npm run build:css && electron-builder --dir",
+    "dist": "npm run build:css && electron-builder --win nsis"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "daisyui": "^5.7.22",
+    "electron": "^43.2.0",
+    "electron-builder": "25.1.8",
+    "rcedit": "^5.0.2",
+    "tailwindcss": "^4.3.3"
+  },
+  "build": {
+    "appId": "com.leonardolodi.juicewrldmetadata",
+    "productName": "Juice WRLD metadata",
+    "afterPack": "scripts/after-pack.cjs",
+    "asar": true,
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Juice WRLD metadata"
+    }
+  },
+  "dependencies": {
+    "lucide": "^1.34.0",
+    "node-id3": "^0.2.3"
+  }
+}

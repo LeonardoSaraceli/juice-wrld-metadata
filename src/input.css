@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@source "./index.html";
+@source "./renderer.js";
+@plugin "daisyui" {
+  themes: light --default;
+  logs: false;
+}

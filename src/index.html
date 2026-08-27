@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data: https://juicewrldapi.com; media-src 'self' blob: https://juicewrldapi.com; connect-src 'self' https://juicewrldapi.com https://docs.google.com; style-src 'self'; script-src 'self';"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Juice WRLD metadata</title>
+    <link rel="stylesheet" href="daisyui.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <img src="../assets/icon.png" alt="" />
+          <div>
+            <strong>Juice WRLD</strong>
+            <span>metadata</span>
+          </div>
+        </div>
+
+        <nav class="navigation" aria-label="Navegação principal">
+          <button class="nav-item active" data-view="editor">
+            <span class="nav-icon"><i data-lucide="file-pen-line"></i></span><span>Editor</span>
+          </button>
+          <button class="nav-item" data-view="quality">
+            <span class="nav-icon"><i data-lucide="shield-check"></i></span><span>Qualidade</span>
+          </button>
+          <button class="nav-item" data-view="catalog">
+            <span class="nav-icon"><i data-lucide="library"></i></span><span>Catálogo</span>
+          </button>
+          <button class="nav-item" data-view="covers">
+            <span class="nav-icon"><i data-lucide="images"></i></span><span>Covers</span>
+          </button>
+          <button class="nav-item" data-view="tracker">
+            <span class="nav-icon"><i data-lucide="list-music"></i></span><span>Tracker</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-note">
+          <span class="status-dot"></span>
+          <div><strong>Processamento local</strong><span>Seus arquivos ficam no computador</span></div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="view active" id="view-editor">
+          <header class="page-header">
+            <div>
+              <p class="eyebrow">Organize sua coleção</p>
+              <h1>Editor de metadados</h1>
+              <p class="page-description">Edite somente o que importa. WAV é preparado para conversão automática em ALAC.</p>
+            </div>
+            <div class="header-actions">
+              <button class="button secondary" id="lyrics-search-all" disabled>Buscar letras</button>
+              <button class="button secondary" id="remove-selected" disabled>Remover</button>
+              <button class="button primary" id="add-music"><i data-lucide="plus"></i>Adicionar músicas</button>
+            </div>
+          </header>
+
+          <div class="editor-layout">
+            <section class="panel track-panel">
+              <div class="panel-heading">
+                <div>
+                  <h2>Músicas</h2>
+                  <span id="track-count">0 arquivos</span>
+                </div>
+                <div class="list-labels"><span>Arquivo</span><span>Tipo</span></div>
+              </div>
+              <div class="track-list" id="track-list"></div>
+              <div class="empty-state" id="editor-empty">
+                <div class="empty-mark">999</div>
+                <h3>Adicione suas músicas</h3>
+                <p>Arrume os metadados e prepare arquivos lossless para sua biblioteca.</p>
+                <button class="button soft" id="empty-add">Escolher arquivos</button>
+              </div>
+            </section>
+
+            <aside class="panel inspector" id="inspector" aria-label="Detalhes da música">
+              <div class="inspector-empty">
+                <div class="select-symbol">↖</div>
+                <h3>Selecione uma música</h3>
+                <p>Os campos editáveis aparecerão aqui.</p>
+              </div>
+              <div class="inspector-content hidden">
+                <div class="inspector-top">
+                  <div class="cover-control" id="cover-control" role="button" tabindex="0" aria-label="Escolher capa">
+                    <img id="cover-preview" alt="Capa da música" />
+                    <div class="cover-placeholder"><span>＋</span><small>Adicionar capa</small></div>
+                    <div class="cover-overlay">Alterar capa</div>
+                  </div>
+                  <div class="inspector-summary">
+                    <span class="file-chip" id="selected-type">WAV</span>
+                    <h2 id="selected-title">Sem título</h2>
+                    <p id="selected-file">arquivo.wav</p>
+                  </div>
+                </div>
+
+                <section class="editor-tools" aria-label="Ferramentas da música">
+                  <details class="editor-tool collapse collapse-arrow bg-base-100 border border-base-300" id="editor-cover-tool">
+                    <summary class="collapse-title">
+                      <span class="editor-tool-icon"><i data-lucide="image-search"></i></span>
+                      <span><strong>Buscar capa</strong><small>Pesquisa manual em todos os artistas</small></span>
+                    </summary>
+                    <div class="collapse-content">
+                      <div class="editor-tool-search join">
+                        <input class="input input-bordered join-item" id="editor-cover-query" placeholder="Digite o nome da capa" autocomplete="off" />
+                        <button class="btn btn-neutral join-item" id="editor-cover-submit" type="button">Buscar</button>
+                      </div>
+                      <p class="editor-tool-note">Ao usar uma capa, ela será salva na pasta <strong>covers</strong> da música e substituirá a capa local correspondente.</p>
+                      <div class="editor-tool-results" id="editor-cover-results"></div>
+                    </div>
+                  </details>
+
+                  <details class="editor-tool collapse collapse-arrow bg-base-100 border border-base-300" id="editor-original-tool">
+                    <summary class="collapse-title">
+                      <span class="editor-tool-icon"><i data-lucide="file-scan"></i></span>
+                      <span><strong>Validar com o original</strong><small>Compara áudio, codec, duração e espectro</small></span>
+                    </summary>
+                    <div class="collapse-content">
+                      <div class="editor-tool-search join">
+                        <input class="input input-bordered join-item" id="editor-original-query" placeholder="Pesquise pelo título ou nome original" autocomplete="off" />
+                        <button class="btn btn-neutral join-item" id="editor-original-submit" type="button">Buscar</button>
+                      </div>
+                      <p class="editor-tool-note">A validação baixa temporariamente apenas o original escolhido. ALAC/M4A convertido de WAV pode ser confirmado pela assinatura do áudio decodificado.</p>
+                      <div class="editor-tool-results" id="editor-original-results"></div>
+                      <div class="original-comparison hidden" id="editor-original-comparison" aria-live="polite"></div>
+                    </div>
+                  </details>
+                </section>
+
+                <form id="metadata-form" autocomplete="off">
+                  <div class="field full">
+                    <label for="field-title">Título</label>
+                    <input id="field-title" name="title" />
+                  </div>
+                  <div class="form-grid">
+                    <div class="field">
+                      <label for="field-artist">Artista</label>
+                      <input id="field-artist" name="artist" />
+                    </div>
+                    <div class="field">
+                      <label for="field-contributors">Participações</label>
+                      <input id="field-contributors" name="contributors" placeholder="Separadas por vírgula" />
+                    </div>
+                    <div class="field">
+                      <label for="field-album">Álbum</label>
+                      <input id="field-album" name="album" />
+                    </div>
+                    <div class="field">
+                      <label for="field-year">Ano</label>
+                      <input id="field-year" name="year" inputmode="numeric" maxlength="4" />
+                    </div>
+                    <div class="field full-grid">
+                      <label for="field-genre">Gênero</label>
+                      <input id="field-genre" name="genre" />
+                    </div>
+                  </div>
+
+                  <section class="lyrics-editor">
+                    <div class="lyrics-editor-heading">
+                      <div>
+                        <h3>Letras</h3>
+                        <p>Correspondências seguras são preenchidas para revisão; resultados duvidosos mostram opções.</p>
+                      </div>
+                      <button class="button secondary" id="lyrics-search" type="button">Buscar na API</button>
+                    </div>
+                    <div class="lyrics-match hidden" id="lyrics-match" aria-live="polite"></div>
+                    <div class="lyrics-format hidden" id="lyrics-format" aria-live="polite"></div>
+                    <div class="field full">
+                      <label for="field-lyrics">Letra</label>
+                      <textarea id="field-lyrics" name="lyrics" rows="7" placeholder="Letra completa"></textarea>
+                      <small>Será incorporada aos metadados do arquivo quando o formato permitir.</small>
+                    </div>
+                  </section>
+                </form>
+
+                <div class="format-section">
+                  <div>
+                    <h3>Formato de saída</h3>
+                    <p id="format-hint">Mantenha o arquivo como está ou converta sem perdas.</p>
+                  </div>
+                  <div class="segmented" role="radiogroup" aria-label="Formato de saída">
+                    <button data-format="keep" role="radio">Manter formato</button>
+                    <button data-format="alac" role="radio">Converter para ALAC</button>
+                  </div>
+                </div>
+              </div>
+            </aside>
+          </div>
+
+          <div class="editor-footer">
+            <div class="footer-summary">
+              <span class="footer-icon"><i data-lucide="check"></i></span>
+              <div><strong id="ready-count">Nenhuma música pronta</strong><span>As alterações só são aplicadas ao salvar.</span></div>
+            </div>
+            <button class="button primary large" id="save-all" disabled>Salvar alterações</button>
+          </div>
+        </section>
+
+        <section class="view" id="view-catalog">
+          <header class="page-header catalog-header">
+            <div>
+              <p class="eyebrow">Juice WRLD API</p>
+              <h1>Original Files</h1>
+              <p class="page-description">Pesquise e baixe somente os arquivos originais disponíveis na API.</p>
+            </div>
+            <button class="text-button" id="open-api-docs">Documentação <i data-lucide="external-link"></i></button>
+          </header>
+
+          <div>
+              <div class="search-row">
+                <label class="search-box">
+                  <span><i data-lucide="search"></i></span>
+                  <input id="catalog-search" placeholder="Buscar música (opcional com filtros)..." />
+                </label>
+                <button class="button primary search-submit" id="catalog-submit" type="button">Aplicar</button>
+                <span class="result-count" id="catalog-count"></span>
+              </div>
+              <div class="catalog-filter-row catalog-filter-row-originals">
+                <label class="filter-field">
+                  <span>Época</span>
+                  <select id="catalog-era">
+                    <option value="">Todas</option>
+                  </select>
+                </label>
+                <label class="filter-field">
+                  <span>Formato</span>
+                  <select id="catalog-format">
+                    <option value="all">WAV e MP3</option>
+                    <option value="wav">WAV</option>
+                    <option value="mp3">MP3</option>
+                  </select>
+                </label>
+              </div>
+              <div class="catalog-batch hidden" id="catalog-batch">
+                <button class="text-button catalog-select-page" id="catalog-select-page" type="button">Selecionar página</button>
+                <span class="catalog-selected-count" id="catalog-selected-count">0 selecionadas</span>
+                <div class="catalog-queue-progress hidden" id="catalog-queue-progress">
+                  <span id="catalog-queue-label"></span>
+                  <div><i id="catalog-queue-bar"></i></div>
+                </div>
+                <button class="text-button hidden" id="catalog-clear-selection" type="button">Limpar</button>
+                <button class="button primary hidden" id="catalog-download-selected" type="button">Baixar selecionadas</button>
+              </div>
+              <div class="simple-results" id="catalog-grid"></div>
+            <div class="section-empty" id="catalog-empty">
+              <div class="empty-mark">999</div>
+              <h3>Pesquise uma música</h3>
+              <p>Os resultados da API aparecerão somente depois da busca.</p>
+            </div>
+            <div class="pagination hidden" id="catalog-pagination">
+              <button class="button secondary" id="catalog-prev">Anterior</button>
+              <span id="catalog-page">Página 1</span>
+              <button class="button secondary" id="catalog-next">Próxima</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-covers">
+          <header class="page-header catalog-header">
+            <div>
+              <p class="eyebrow">Juice WRLD API</p>
+              <h1>Covers</h1>
+              <p class="page-description">Pesquise capas de todos os artistas disponíveis na API. As imagens só são carregadas quando você escolher.</p>
+            </div>
+          </header>
+          <div class="search-row covers-search-row">
+            <label class="search-box">
+              <span><i data-lucide="search"></i></span>
+              <input id="covers-search" placeholder="Buscar capa ou coleção..." />
+            </label>
+            <button class="button primary search-submit" id="covers-submit" type="button">Buscar</button>
+            <div class="covers-toolbar">
+              <span class="result-count" id="covers-count"></span>
+              <div class="layout-toggle" aria-label="Visualização dos covers">
+                <button class="active" id="covers-grid-view" type="button" title="Grade" aria-label="Visualização em grade" aria-pressed="true">
+                  <span class="grid-layout-icon" aria-hidden="true"></span>
+                </button>
+                <button id="covers-list-view" type="button" title="Lista" aria-label="Visualização em lista" aria-pressed="false">
+                  <span class="list-layout-icon" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="browser-heading">
+            <div class="breadcrumbs" id="covers-breadcrumbs"></div>
+          </div>
+          <div class="simple-results" id="covers-grid"></div>
+          <div class="section-empty" id="covers-empty">
+            <div class="empty-mark">▣</div>
+            <h3>Pesquise uma capa</h3>
+            <p>Nenhuma imagem será carregada antes de você escolher um resultado.</p>
+          </div>
+          <div class="pagination hidden" id="covers-pagination">
+            <button class="button secondary" id="covers-prev">Anterior</button>
+            <span id="covers-page">Página 1</span>
+            <button class="button secondary" id="covers-next">Próxima</button>
+          </div>
+        </section>
+
+        <section class="view" id="view-tracker">
+          <header class="page-header catalog-header">
+            <div>
+              <p class="eyebrow">Unreleased Discography</p>
+              <h1>Tracker</h1>
+              <p class="page-description">Pesquise uma música para ver nomes alternativos, instrumental, produção, datas e arquivos disponíveis.</p>
+            </div>
+            <button class="text-button" id="open-tracker">Abrir planilha <i data-lucide="external-link"></i></button>
+          </header>
+          <div class="search-row">
+            <label class="search-box">
+              <span><i data-lucide="search"></i></span>
+              <input id="tracker-search" placeholder="Buscar título, produtor ou era..." />
+            </label>
+            <button class="button primary search-submit" id="tracker-submit" type="button">Buscar</button>
+            <span class="result-count" id="tracker-count"></span>
+          </div>
+          <div class="tracker-list" id="tracker-list"></div>
+          <div class="section-empty" id="tracker-empty">
+            <div class="empty-mark">≡</div>
+            <h3>Pesquise uma música</h3>
+            <p>Os detalhes completos do tracker e da API aparecerão aqui de forma organizada.</p>
+          </div>
+        </section>
+
+        <section class="view" id="view-quality">
+          <header class="page-header quality-header">
+            <div>
+              <p class="eyebrow">Verificação local</p>
+              <h1>Qualidade da biblioteca</h1>
+              <p class="page-description">Analise codecs e arquivos sem perdas da pasta Music. A verificação usa poucos recursos e confirma alertas em mais de um trecho.</p>
+            </div>
+            <div class="header-actions">
+              <button class="button secondary hidden" id="quality-cancel" type="button">Cancelar</button>
+              <button class="button primary" id="quality-scan" type="button">Analisar biblioteca</button>
+            </div>
+          </header>
+
+          <div class="quality-note">
+            <span><i data-lucide="shield-alert"></i></span>
+            <p><strong>Triagem, não certificação.</strong> Arquivos lossless exigem repetição do corte em múltiplos trechos. MP3 de alta taxa também passa por uma análise leve para sinalizar possível recodificação de uma fonte inferior, mas a confirmação mais segura é a comparação com um arquivo original do catálogo.</p>
+          </div>
+
+          <div class="quality-progress hidden" id="quality-progress">
+            <div><strong id="quality-progress-title">Preparando análise...</strong><span id="quality-progress-copy"></span></div>
+            <div class="quality-progress-track"><i id="quality-progress-bar"></i></div>
+          </div>
+
+          <div class="quality-summary hidden" id="quality-summary">
+            <div><span>Total</span><strong id="quality-total">0</strong></div>
+            <div class="ok"><span>Compatíveis</span><strong id="quality-ok">0</strong></div>
+            <div class="lossy"><span>Com perdas</span><strong id="quality-lossy">0</strong></div>
+            <div class="suspect"><span>Suspeitos</span><strong id="quality-suspect">0</strong></div>
+            <div class="review"><span>Revisar</span><strong id="quality-review">0</strong></div>
+          </div>
+
+          <div class="quality-toolbar hidden" id="quality-toolbar">
+            <label class="search-box">
+              <span><i data-lucide="search"></i></span>
+              <input id="quality-search" placeholder="Buscar arquivo ou pasta..." />
+            </label>
+            <label class="select-field">
+              <span>Resultado</span>
+              <select id="quality-filter">
+                <option value="all">Todos</option>
+                <option value="attention">Suspeitos e revisar</option>
+                <option value="suspect">Suspeitos</option>
+                <option value="review">Revisar</option>
+                <option value="ok">Compatíveis</option>
+                <option value="lossy">Com perdas</option>
+                <option value="error">Com erro</option>
+              </select>
+            </label>
+            <span class="result-count" id="quality-count"></span>
+          </div>
+
+          <div class="quality-list" id="quality-list"></div>
+          <div class="pagination hidden" id="quality-pagination">
+            <button class="button secondary" id="quality-prev" type="button">Anterior</button>
+            <span id="quality-page">Página 1</span>
+            <button class="button secondary" id="quality-next" type="button">Próxima</button>
+          </div>
+          <div class="section-empty" id="quality-empty">
+            <div class="empty-mark"><i data-lucide="scan-search"></i></div>
+            <h3>Verifique sua biblioteca</h3>
+            <p>Nenhum arquivo é alterado. A análise começa somente quando você solicitar.</p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="mini-player hidden" id="mini-player">
+      <img id="player-cover" alt="" />
+      <div class="player-copy"><strong id="player-title"></strong><span id="player-artist"></span></div>
+      <audio id="audio-player" controls></audio>
+      <button class="icon-button" id="close-player" aria-label="Fechar player"><i data-lucide="x"></i></button>
+    </div>
+
+    <div class="tracker-drawer-backdrop hidden" id="catalog-tracker-backdrop"></div>
+    <aside class="details-drawer tracker-drawer hidden" id="catalog-tracker-drawer" aria-label="Informações do tracker">
+      <div class="drawer-header">
+        <div class="tracker-drawer-heading">
+          <span>Informações do tracker</span>
+          <small id="catalog-tracker-query"></small>
+        </div>
+        <button class="icon-button light" id="close-catalog-tracker" aria-label="Fechar tracker"><i data-lucide="x"></i></button>
+      </div>
+      <div class="drawer-scroll tracker-drawer-content" id="catalog-tracker-content"></div>
+    </aside>
+
+    <div class="toast-region" id="toast-region" aria-live="polite"></div>
+    <div class="loading-overlay hidden" id="loading-overlay">
+      <div class="loading-card">
+        <div class="spinner"></div>
+        <strong id="loading-title">Processando músicas</strong>
+        <span id="loading-copy">Preparando arquivos...</span>
+        <div class="progress-track"><i id="progress-bar"></i></div>
+      </div>
+    </div>
+
+    <div class="cover-viewer-backdrop hidden" id="cover-viewer-backdrop"></div>
+    <section class="cover-viewer hidden" id="cover-viewer" role="dialog" aria-modal="true" aria-label="Visualização da capa">
+      <header class="cover-viewer-header">
+        <div>
+          <strong id="cover-viewer-title">Capa</strong>
+          <span id="cover-viewer-creator"></span>
+        </div>
+        <div class="cover-zoom-controls">
+          <button class="icon-button light" id="cover-zoom-out" type="button" aria-label="Diminuir zoom"><i data-lucide="minus"></i></button>
+          <button class="zoom-value" id="cover-zoom-reset" type="button" title="Restaurar zoom">100%</button>
+          <button class="icon-button light" id="cover-zoom-in" type="button" aria-label="Aumentar zoom"><i data-lucide="plus"></i></button>
+          <button class="icon-button light" id="close-cover-viewer" type="button" aria-label="Fechar visualização"><i data-lucide="x"></i></button>
+        </div>
+      </header>
+      <div class="cover-viewer-body">
+        <div class="cover-viewer-stage" id="cover-viewer-stage">
+          <img id="cover-viewer-image" alt="" draggable="false" />
+        </div>
+        <aside class="cover-viewer-info">
+          <div><span>Dimensões</span><strong id="cover-info-dimensions">—</strong></div>
+          <div><span>Formato</span><strong id="cover-info-format">—</strong></div>
+          <div><span>Tamanho</span><strong id="cover-info-size">—</strong></div>
+          <p>Use os controles, a roda do mouse ou um clique duplo para alterar o zoom.</p>
+        </aside>
+      </div>
+    </section>
+
+    <script src="../node_modules/lucide/dist/umd/lucide.min.js"></script>
+    <script src="renderer.js"></script>
+  </body>
+</html>
